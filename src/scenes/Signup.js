@@ -1,17 +1,21 @@
 import { useState } from "react"
+import bcrypt from 'bcryptjs'
+
+const salt = '$2b$10$Lt0PlnYcAuxa8s2QX1iw6.'
 
 export default function Signup({ setToken, setIsUser }) {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const handleSubmit = (e) => {
         e.preventDefault()
+        const hashedPassword = bcrypt.hashSync(password, salt)
 
         fetch('http://localhost:3001/users', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ email, password })
+            body: JSON.stringify({ email, password: hashedPassword })
         })
         .then(response => response.json())
         .then(data => setToken(data.token))
